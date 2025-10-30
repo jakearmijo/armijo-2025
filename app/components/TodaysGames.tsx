@@ -1,4 +1,3 @@
-import GamesList from "./GamesList";
 import TodaysGamesLive from "./TodaysGamesLive";
 import { getTodaysGames } from "@/app/lib/nhl-api";
 

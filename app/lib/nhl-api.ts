@@ -4,19 +4,16 @@ const NHL_WEB_API_BASE = 'https://api-web.nhle.com/v1';
 export interface NHLGame {
   id: number;
   gameDate: string;
-  homeTeam: {
-    id: number;
-    name: string;
-    abbreviation: string;
-  };
-  awayTeam: {
-    id: number;
-    name: string;
-    abbreviation: string;
-  };
+  homeTeam: NHLTeam; // includes city
+  awayTeam: NHLTeam; // includes city
   status: string;
   homeScore?: number;
   awayScore?: number;
+  homeOdds?: NHLOddsLine[];
+  awayOdds?: NHLOddsLine[];
+  oddsPartners?: NHLOddsPartner[];
+  homeBestLine?: string;
+  awayBestLine?: string;
 }
 
 export interface NHLTeam {
@@ -43,6 +40,30 @@ export interface NHLStandings {
   gamesPlayed: number;
 }
 
+export interface NHLOddsPartner {
+  partnerId: number;
+  name: string;
+  imageUrl?: string;
+  siteUrl?: string;
+}
+
+export interface NHLOddsLine {
+  providerId: number;
+  value: string;
+}
+
+type ApiOddsPartner = {
+  partnerId?: number | string;
+  name?: string;
+  imageUrl?: string;
+  siteUrl?: string;
+};
+
+type ApiOddsLine = {
+  providerId?: number | string;
+  value?: string | number;
+};
+
 // Get today's NHL games
 export async function getTodaysGames(): Promise<NHLGame[]> {
   try {
@@ -55,8 +76,7 @@ export async function getTodaysGames(): Promise<NHLGame[]> {
     }).format(new Date()); // en-CA => YYYY-MM-DD
 
     const response = await fetch(`${NHL_WEB_API_BASE}/score/${easternToday}`, {
-      // Ensure server fetch and fresh-ish data
-      cache: 'no-store',
+      // Server fetch with ISR; client polling handles live updates
       next: { revalidate: 60 },
     });
     
@@ -66,6 +86,14 @@ export async function getTodaysGames(): Promise<NHLGame[]> {
     
     const data = await response.json();
     const rawGames = Array.isArray(data?.games) ? data.games : [];
+    const partners: NHLOddsPartner[] = Array.isArray(data?.oddsPartners)
+      ? (data.oddsPartners as ApiOddsPartner[]).map((p) => ({
+          partnerId: Number(p?.partnerId),
+          name: typeof p?.name === 'string' ? p.name : '',
+          imageUrl: typeof p?.imageUrl === 'string' ? p.imageUrl : undefined,
+          siteUrl: typeof p?.siteUrl === 'string' ? p.siteUrl : undefined,
+        }))
+      : [];
 
     type ApiTeam = {
       id?: number | string;
@@ -99,6 +127,28 @@ export async function getTodaysGames(): Promise<NHLGame[]> {
       return Date.parse(g.startTimeUTC ?? g.gameDate ?? new Date().toISOString());
     };
 
+    const pickBestLine = (
+      lines?: ReadonlyArray<{ providerId?: number | string; value?: string }>,
+      partnersList?: ReadonlyArray<NHLOddsPartner>
+    ): string | undefined => {
+      if (!Array.isArray(lines) || lines.length === 0) return undefined;
+      const byProvider = new Map<number, string>();
+      for (const l of lines) {
+        const id = Number(l?.providerId);
+        const v = typeof l?.value === 'string' ? l.value : undefined;
+        if (!Number.isNaN(id) && v) byProvider.set(id, v);
+      }
+      const dk = (partnersList || []).find(
+        (p) => typeof p?.name === 'string' && p.name.trim().toLowerCase() === 'draftkings'
+      );
+      if (dk && byProvider.has(Number(dk.partnerId))) return byProvider.get(Number(dk.partnerId));
+      const fd = (partnersList || []).find(
+        (p) => typeof p?.name === 'string' && p.name.trim().toLowerCase() === 'fanduel'
+      );
+      if (fd && byProvider.has(Number(fd.partnerId))) return byProvider.get(Number(fd.partnerId));
+      return [...byProvider.values()][0];
+    };
+
     const normalized: NHLGame[] = (rawGames as ApiGame[]).map((g) => {
       const home = g.homeTeam || {};
       const away = g.awayTeam || {};
@@ -120,6 +170,15 @@ export async function getTodaysGames(): Promise<NHLGame[]> {
         : gameState === 'FINAL' || gameState === 'OFF' ? 'Final'
         : 'Scheduled';
 
+      const homeOddsSource = (home as { odds?: ApiOddsLine[] }).odds;
+      const homeOdds = Array.isArray(homeOddsSource)
+        ? homeOddsSource.map((o) => ({ providerId: Number(o?.providerId), value: String(o?.value ?? '') }))
+        : undefined;
+      const awayOddsSource = (away as { odds?: ApiOddsLine[] }).odds;
+      const awayOdds = Array.isArray(awayOddsSource)
+        ? awayOddsSource.map((o) => ({ providerId: Number(o?.providerId), value: String(o?.value ?? '') }))
+        : undefined;
+
       return {
         id: pickGameCenterId(g),
         gameDate: g.startTimeUTC ?? g.gameDate ?? new Date().toISOString(),
@@ -128,6 +187,11 @@ export async function getTodaysGames(): Promise<NHLGame[]> {
         status,
         homeScore: typeof home.score === 'number' ? home.score : undefined,
         awayScore: typeof away.score === 'number' ? away.score : undefined,
+        homeOdds,
+        awayOdds,
+        oddsPartners: partners,
+        homeBestLine: pickBestLine(homeOdds, partners),
+        awayBestLine: pickBestLine(awayOdds, partners),
       } as NHLGame;
     });
 

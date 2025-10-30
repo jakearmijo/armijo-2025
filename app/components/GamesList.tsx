@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { formatTeamName, isGameFinished, isGameLive, type NHLGame } from "@/app/lib/nhl-api";
 
@@ -25,7 +26,7 @@ export default function GamesList({ games }: GamesListProps) {
               ? "border-green-400 bg-green-50 dark:bg-green-900"
               : isGameFinished(game)
               ? "border-gray-400 bg-gray-50 dark:bg-gray-800"
-              : "border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900"
+              : "border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-900"
           }`}
           onClick={() => handleGameClick(game.id)}
         >
@@ -36,6 +37,18 @@ export default function GamesList({ games }: GamesListProps) {
                   <p className="font-semibold text-black dark:text-white">
                     {formatTeamName(game.awayTeam)}
                   </p>
+                  {game.awayBestLine ? (
+                    <p className="text-xs inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-black text-white mt-1">
+                      {(() => {
+                        const logo = game.oddsPartners?.find(p => p.name?.toLowerCase() === "draftkings")?.imageUrl
+                          || game.oddsPartners?.find(p => p.name?.toLowerCase() === "fanduel")?.imageUrl;
+                        return logo ? (
+                          <Image src={logo} alt="Odds Provider" width={14} height={14} className="h-3 w-auto" />
+                        ) : null;
+                      })()}
+                      <span className="font-semibold">{game.awayBestLine}</span>
+                    </p>
+                  ) : null}
                   <p className="text-sm text-gray-600 dark:text-gray-300">
                     {game.awayTeam.abbreviation}
                   </p>
@@ -57,6 +70,18 @@ export default function GamesList({ games }: GamesListProps) {
                   <p className="font-semibold text-black dark:text-white">
                     {formatTeamName(game.homeTeam)}
                   </p>
+                  {game.homeBestLine ? (
+                    <p className="text-xs inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-black text-white mt-1">
+                      {(() => {
+                        const logo = game.oddsPartners?.find(p => p.name?.toLowerCase() === "draftkings")?.imageUrl
+                          || game.oddsPartners?.find(p => p.name?.toLowerCase() === "fanduel")?.imageUrl;
+                        return logo ? (
+                          <Image src={logo} alt="Odds Provider" width={14} height={14} className="h-3 w-auto" />
+                        ) : null;
+                      })()}
+                      <span className="font-semibold">{game.homeBestLine}</span>
+                    </p>
+                  ) : null}
                   <p className="text-sm text-gray-600 dark:text-gray-300">
                     {game.homeTeam.abbreviation}
                   </p>
@@ -70,7 +95,7 @@ export default function GamesList({ games }: GamesListProps) {
                       ? "bg-green-500 text-white"
                       : isGameFinished(game)
                       ? "bg-gray-500 text-white"
-                      : "bg-red-600 text-white"
+                      : "bg-orange-500 text-black"
                   }`}
                 >
                   {game.status}

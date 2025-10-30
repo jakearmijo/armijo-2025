@@ -4,14 +4,14 @@ import TodaysGames from "../components/TodaysGames";
 
 export default function TodaysTilts() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-white dark:from-black dark:to-red-900">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 dark:from-black dark:to-orange-900">
       {/* Header */}
-      <header className="bg-red-600 border-b-4 border-black">
+      <header className="bg-black border-b-4 border-orange-500">
         <div className="w-full max-w-6xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <Link 
               href="/" 
-              className="text-lg font-semibold text-white hover:text-red-200 transition-colors"
+              className="text-lg font-semibold text-orange-400 hover:text-orange-300 transition-colors"
             >
               ← Back to Portfolio
             </Link>
