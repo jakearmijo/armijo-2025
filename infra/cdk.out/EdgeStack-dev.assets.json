@@ -1,0 +1,36 @@
+{
+  "version": "48.0.0",
+  "files": {
+    "d41c8e6342cd078b5ea5aec11522bdb605eae00f4bb98a3fb0b44c827e9b5ca9": {
+      "displayName": "EdgeStack-dev/Custom::CrossRegionExportReaderCustomResourceProvider Code",
+      "source": {
+        "path": "asset.d41c8e6342cd078b5ea5aec11522bdb605eae00f4bb98a3fb0b44c827e9b5ca9",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "169126338767-us-east-1-0a6fcce1": {
+          "bucketName": "cdk-hnb659fds-assets-169126338767-us-east-1",
+          "objectKey": "d41c8e6342cd078b5ea5aec11522bdb605eae00f4bb98a3fb0b44c827e9b5ca9.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::169126338767:role/cdk-hnb659fds-file-publishing-role-169126338767-us-east-1"
+        }
+      }
+    },
+    "88aa144b4264681efb30209c163cdf6c140cefc645bc76f6906fa7a426f3034d": {
+      "displayName": "EdgeStack-dev Template",
+      "source": {
+        "path": "EdgeStack-dev.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "169126338767-us-east-1-c594d46e": {
+          "bucketName": "cdk-hnb659fds-assets-169126338767-us-east-1",
+          "objectKey": "88aa144b4264681efb30209c163cdf6c140cefc645bc76f6906fa7a426f3034d.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::169126338767:role/cdk-hnb659fds-file-publishing-role-169126338767-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

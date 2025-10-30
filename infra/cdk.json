@@ -1,0 +1,11 @@
+{
+  "app": "npx ts-node bin/cdk.ts",
+  "context": {
+    "env": "dev",
+    "primaryRegion": "us-east-2",
+    "domainName": "jakearmijo.com",
+    "siteSubdomains": ["www"],
+    "containerCpu": 256,
+    "containerMemory": 512
+  }
+}

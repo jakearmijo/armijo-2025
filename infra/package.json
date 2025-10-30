@@ -1,0 +1,21 @@
+{
+  "name": "armijo-infra",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "build": "tsc -p .",
+    "watch": "tsc -w -p .",
+    "synth": "cdk synth",
+    "deploy": "cdk deploy --all --require-approval never",
+    "destroy": "cdk destroy --all"
+  },
+  "devDependencies": {
+    "@types/node": "20.11.30",
+    "aws-cdk": "^2.1031.1",
+    "aws-cdk-lib": "2.221.1",
+    "constructs": "10.3.0",
+    "dotenv": "^16.4.5",
+    "ts-node": "10.9.2",
+    "typescript": "5.4.5"
+  }
+}

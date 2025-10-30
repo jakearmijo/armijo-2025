@@ -1,0 +1,36 @@
+{
+  "version": "48.0.0",
+  "files": {
+    "8a17fb3ceee821f797100bf65fa3047c164a08c03aa5a07fbcff9a676fb73b97": {
+      "displayName": "DevAppStack-dev/Custom::CrossRegionExportWriterCustomResourceProvider Code",
+      "source": {
+        "path": "asset.8a17fb3ceee821f797100bf65fa3047c164a08c03aa5a07fbcff9a676fb73b97",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "169126338767-us-east-2-d2d78ca0": {
+          "bucketName": "cdk-hnb659fds-assets-169126338767-us-east-2",
+          "objectKey": "8a17fb3ceee821f797100bf65fa3047c164a08c03aa5a07fbcff9a676fb73b97.zip",
+          "region": "us-east-2",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::169126338767:role/cdk-hnb659fds-file-publishing-role-169126338767-us-east-2"
+        }
+      }
+    },
+    "25e0a9cf4457d280460999fc19bb753ee51c46b0c8156f2c2f8b5c6012ad4fae": {
+      "displayName": "DevAppStack-dev Template",
+      "source": {
+        "path": "DevAppStack-dev.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "169126338767-us-east-2-c24351b4": {
+          "bucketName": "cdk-hnb659fds-assets-169126338767-us-east-2",
+          "objectKey": "25e0a9cf4457d280460999fc19bb753ee51c46b0c8156f2c2f8b5c6012ad4fae.json",
+          "region": "us-east-2",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::169126338767:role/cdk-hnb659fds-file-publishing-role-169126338767-us-east-2"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}
